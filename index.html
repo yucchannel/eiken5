@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英検5級リスニング練習</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>英検5級リスニング練習</h1>
+    <div id="question-container">
+        <p id="question">質問が表示されます</p>
+        <div id="wordButtons"></div>
+    </div>
+
+    <button id="playAudio">問題を出す</button>
+    <div id="result"></div>
+    <p>点数: <span id="score">0</span></p>
+
+<script>const questions = [
+    { 
+      japanese: "あなたの学校はどこですか？", 
+      english: "Where is your school?"
+    },
+    { 
+      japanese: "私はリンゴが好きです。",
+      english: "I like apples."
+    },
+    { 
+      japanese: "彼は私の兄です。",
+      english: "He is my brother."
+    },
+    { 
+      japanese: "今日は外が雨です。",
+      english: "It is rainy outside."
+    },
+    { 
+      japanese: "私は5歳です。",
+      english: "I am five years old."
+    },
+    { 
+      japanese: "これは私の好きな本です。",
+      english: "This is my favorite book."
+    },
+    { 
+      japanese: "あなたは英語を話せますか？",
+      english: "Can you speak English?"
+    },
+    { 
+      japanese: "私たちは公園に行きます。",
+      english: "We are going to the park."
+    },
+    { 
+      japanese: "私は学校にバスで行きます。",
+      english: "I go to school by bus."
+    },
+    { 
+      japanese: "お誕生日は何月ですか？",
+      english: "When is your birthday?"
+    },
+    // 以下、問題を追加
+  ];
+  
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedWords = [];
+  
+  document.getElementById("playAudio").addEventListener("click", () => {
+    const questionText = questions[currentQuestionIndex].english;
+  
+    // 音声合成を使用して英語の文章を読み上げ
+    const speech = new SpeechSynthesisUtterance(questionText);
+    speech.lang = 'en-US';
+    window.speechSynthesis.speak(speech);
+  
+    // 問題を表示
+    document.getElementById("question").textContent = `質問: ${questions[currentQuestionIndex].japanese}`;
+  
+    // 単語ボタンを表示
+    displayWordButtons();
+  });
+  
+  function displayWordButtons() {
+    const wordButtonsContainer = document.getElementById("wordButtons");
+    wordButtonsContainer.innerHTML = ""; // 既存のボタンをクリア
+  
+    const correctAnswer = questions[currentQuestionIndex].english;
+  
+    // 正解を含むボタンを作成
+    const allAnswers = [correctAnswer];
+  
+    // ランダムな不正解を作成
+    while (allAnswers.length < 4) {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const randomAnswer = questions[randomIndex].english;
+      if (!allAnswers.includes(randomAnswer)) {
+        allAnswers.push(randomAnswer);
+      }
+    }
+  
+    // ランダムに並べ替え
+    allAnswers.sort(() => Math.random() - 0.5);
+  
+    // ボタンを作成
+    allAnswers.forEach(answer => {
+      const button = document.createElement("button");
+      button.textContent = answer;
+      button.addEventListener("click", () => checkAnswer(button, answer));
+      wordButtonsContainer.appendChild(button);
+    });
+  }
+  
+  function checkAnswer(button, answer) {
+    const correctAnswer = questions[currentQuestionIndex].english;
+    
+    if (answer === correctAnswer) {
+      score++;
+      document.getElementById("result").textContent = "正解です！";
+      document.getElementById("result").style.color = "green";
+    } else {
+      document.getElementById("result").textContent = "不正解です。もう一度試してください。";
+      document.getElementById("result").style.color = "red";
+    }
+  
+    // 点数を表示
+    document.getElementById("score").textContent = score;
+  
+    // 次の問題へ
+    currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+    selectedWords = []; // 選択された単語をリセット
+  }
+  </script>
+
+</body>
+</html>
+
+<style>body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+}
+
+button.selected {
+    background-color: lightblue;
+}
+
+#wordButtons {
+    margin-top: 20px;
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+}
+</style>

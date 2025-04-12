@@ -17,7 +17,7 @@
   <p>点数: <span id="score">0</span></p>
 
   <script>
-    const questions = [
+const questions = [
       { japanese: "これはペンですか？", english: "Is this a pen?" },
       { japanese: "あなたの名前は何ですか？", english: "What is your name?" },
       { japanese: "彼は学生です。", english: "He is a student." },
@@ -116,6 +116,7 @@
     let currentQuestionIndex = 0;
     let score = 0;
 
+    // 音声を再生し、問題を表示
     document.getElementById("playAudio").addEventListener("click", () => {
       const questionText = questions[currentQuestionIndex].english;
       responsiveVoice.speak(questionText, "UK English Male", {rate: 1, pitch: 1, volume: 1});
@@ -123,6 +124,7 @@
       displayWordButtons();
     });
 
+    // 選択肢のボタンを表示
     function displayWordButtons() {
       const wordButtonsContainer = document.getElementById("wordButtons");
       wordButtonsContainer.innerHTML = "";
@@ -130,6 +132,7 @@
       const correctAnswer = questions[currentQuestionIndex].english;
       const allAnswers = [correctAnswer];
 
+      // 4つの選択肢を作成
       while (allAnswers.length < 4) {
         const randomIndex = Math.floor(Math.random() * questions.length);
         const randomAnswer = questions[randomIndex].english;
@@ -138,8 +141,10 @@
         }
       }
 
+      // 選択肢をシャッフル
       allAnswers.sort(() => Math.random() - 0.5);
 
+      // ボタンを作成して追加
       allAnswers.forEach(answer => {
         const button = document.createElement("button");
         button.textContent = answer;
@@ -148,9 +153,11 @@
       });
     }
 
+    // 正誤判定
     function checkAnswer(button, answer) {
       const correctAnswer = questions[currentQuestionIndex].english;
 
+      // 正解か不正解かを表示
       if (answer === correctAnswer) {
         score++;
         document.getElementById("result").textContent = "正解です！";
@@ -160,7 +167,10 @@
         document.getElementById("result").style.color = "red";
       }
 
+      // スコア更新
       document.getElementById("score").textContent = score;
+
+      // 次の問題に進む
       currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
     }
   </script>

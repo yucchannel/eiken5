@@ -17,7 +17,8 @@
     <div id="result"></div>
     <p>点数: <span id="score">0</span></p>
 
-<script>const questions = [
+<script>
+const questions = [
     { 
       japanese: "あなたの学校はどこですか？", 
       english: "Where is your school?"
@@ -60,81 +61,90 @@
     },
     // 以下、問題を追加
   ];
+
+let currentQuestionIndex = 0;
+let score = 0;
+
+document.getElementById("playAudio").addEventListener("click", () => {
+  const questionText = questions[currentQuestionIndex].english;
+
+  // 音声合成を使用して英語の文章を読み上げ
+  const speech = new SpeechSynthesisUtterance(questionText);
+
+  // ネイティブな発音を選択
+  const voices = window.speechSynthesis.getVoices();
+  const englishVoice = voices.find(voice => voice.lang === 'en-US');
+  if (englishVoice) {
+    speech.voice = englishVoice; // 英語（アメリカ）のネイティブな音声に設定
+  }
   
-  let currentQuestionIndex = 0;
-  let score = 0;
-  let selectedWords = [];
+  speech.rate = 1; // 発音スピード（1が標準）
+  speech.pitch = 1; // ピッチの高さ（1が標準）
   
-  document.getElementById("playAudio").addEventListener("click", () => {
-    const questionText = questions[currentQuestionIndex].english;
-  
-    // 音声合成を使用して英語の文章を読み上げ
-    const speech = new SpeechSynthesisUtterance(questionText);
-    speech.lang = 'en-US';
-    window.speechSynthesis.speak(speech);
-  
-    // 問題を表示
-    document.getElementById("question").textContent = `質問: ${questions[currentQuestionIndex].japanese}`;
-  
-    // 単語ボタンを表示
-    displayWordButtons();
+  window.speechSynthesis.speak(speech);
+
+  // 問題を表示
+  document.getElementById("question").textContent = `質問: ${questions[currentQuestionIndex].japanese}`;
+
+  // 単語ボタンを表示
+  displayWordButtons();
+});
+
+function displayWordButtons() {
+  const wordButtonsContainer = document.getElementById("wordButtons");
+  wordButtonsContainer.innerHTML = ""; // 既存のボタンをクリア
+
+  const correctAnswer = questions[currentQuestionIndex].english;
+
+  // 正解を含むボタンを作成
+  const allAnswers = [correctAnswer];
+
+  // ランダムな不正解を作成
+  while (allAnswers.length < 4) {
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const randomAnswer = questions[randomIndex].english;
+    if (!allAnswers.includes(randomAnswer)) {
+      allAnswers.push(randomAnswer);
+    }
+  }
+
+  // ランダムに並べ替え
+  allAnswers.sort(() => Math.random() - 0.5);
+
+  // ボタンを作成
+  allAnswers.forEach(answer => {
+    const button = document.createElement("button");
+    button.textContent = answer;
+    button.addEventListener("click", () => checkAnswer(button, answer));
+    wordButtonsContainer.appendChild(button);
   });
+}
+
+function checkAnswer(button, answer) {
+  const correctAnswer = questions[currentQuestionIndex].english;
   
-  function displayWordButtons() {
-    const wordButtonsContainer = document.getElementById("wordButtons");
-    wordButtonsContainer.innerHTML = ""; // 既存のボタンをクリア
-  
-    const correctAnswer = questions[currentQuestionIndex].english;
-  
-    // 正解を含むボタンを作成
-    const allAnswers = [correctAnswer];
-  
-    // ランダムな不正解を作成
-    while (allAnswers.length < 4) {
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      const randomAnswer = questions[randomIndex].english;
-      if (!allAnswers.includes(randomAnswer)) {
-        allAnswers.push(randomAnswer);
-      }
-    }
-  
-    // ランダムに並べ替え
-    allAnswers.sort(() => Math.random() - 0.5);
-  
-    // ボタンを作成
-    allAnswers.forEach(answer => {
-      const button = document.createElement("button");
-      button.textContent = answer;
-      button.addEventListener("click", () => checkAnswer(button, answer));
-      wordButtonsContainer.appendChild(button);
-    });
+  if (answer === correctAnswer) {
+    score++;
+    document.getElementById("result").textContent = "正解です！";
+    document.getElementById("result").style.color = "green";
+  } else {
+    document.getElementById("result").textContent = "不正解です。もう一度試してください。";
+    document.getElementById("result").style.color = "red";
   }
-  
-  function checkAnswer(button, answer) {
-    const correctAnswer = questions[currentQuestionIndex].english;
-    
-    if (answer === correctAnswer) {
-      score++;
-      document.getElementById("result").textContent = "正解です！";
-      document.getElementById("result").style.color = "green";
-    } else {
-      document.getElementById("result").textContent = "不正解です。もう一度試してください。";
-      document.getElementById("result").style.color = "red";
-    }
-  
-    // 点数を表示
-    document.getElementById("score").textContent = score;
-  
-    // 次の問題へ
-    currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
-    selectedWords = []; // 選択された単語をリセット
-  }
-  </script>
+
+  // 点数を表示
+  document.getElementById("score").textContent = score;
+
+  // 次の問題へ
+  currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+}
+</script>
 
 </body>
 </html>
 
-<style>body {
+<style>
+body {
     font-family: Arial, sans-serif;
     text-align: center;
 }

@@ -8,9 +8,12 @@
 </head>
 <body>
     <h1>英検5級クイズ</h1>
+
     <div id="question-container">
-        <p id="question">質問が表示されます</p>
-        <div id="wordButtons"></div>
+        <p id="question">問題を選んでください</p>
+        <div id="answer-buttons">
+            <!-- 答えのボタンがここに表示されます -->
+        </div>
     </div>
 
     <button id="playAudio">問題を出す</button>
@@ -18,118 +21,302 @@
     <p>点数: <span id="score">0</span></p>
 
 <script>
-// 100問の英検5級の問題リスト
+// 100問の英検5級の問題リスト（日本語の問題と正解の英語の答え）
 const questions = [
-    { japanese: "あなたの学校はどこですか？", english: "Where is your school?" },
-    { japanese: "私はリンゴが好きです。", english: "I like apples." },
-    { japanese: "彼は私の兄です。", english: "He is my brother." },
-    { japanese: "今日は外が雨です。", english: "It is rainy outside." },
-    { japanese: "私は5歳です。", english: "I am five years old." },
-    { japanese: "これは私の好きな本です。", english: "This is my favorite book." },
-    { japanese: "あなたは英語を話せますか？", english: "Can you speak English?" },
-    { japanese: "私たちは公園に行きます。", english: "We are going to the park." },
-    { japanese: "私は学校にバスで行きます。", english: "I go to school by bus." },
-    { japanese: "お誕生日は何月ですか？", english: "When is your birthday?" },
-    { japanese: "私は朝ごはんにパンを食べます。", english: "I eat bread for breakfast." },
-    { japanese: "彼女は歌うのが好きです。", english: "She likes to sing." },
-    { japanese: "私は走るのが得意です。", english: "I am good at running." },
-    { japanese: "あなたはどこに住んでいますか？", english: "Where do you live?" },
-    { japanese: "今日はとても暑いです。", english: "It is very hot today." },
-    { japanese: "これはあなたのペンですか？", english: "Is this your pen?" },
-    { japanese: "私の好きな色は青です。", english: "My favorite color is blue." },
-    { japanese: "私は本を読むのが好きです。", english: "I like to read books." },
-    { japanese: "彼はサッカーをします。", english: "He plays soccer." },
-    { japanese: "あなたの名前は何ですか？", english: "What is your name?" },
-    { japanese: "私は魚が好きではありません。", english: "I don't like fish." },
-    { japanese: "私の家は大きいです。", english: "My house is big." },
-    { japanese: "あなたは何歳ですか？", english: "How old are you?" },
-    { japanese: "私は毎日英語を勉強します。", english: "I study English every day." },
-    { japanese: "ここはどこですか？", english: "Where is this?" },
-    { japanese: "彼女は美しいです。", english: "She is beautiful." },
-    { japanese: "これはあなたの本ですか？", english: "Is this your book?" },
-    { japanese: "私の兄は医者です。", english: "My brother is a doctor." },
-    { japanese: "今日は何曜日ですか？", english: "What day is it today?" },
-    { japanese: "私は音楽を聴くのが好きです。", english: "I like listening to music." },
-    { japanese: "あなたの趣味は何ですか？", english: "What is your hobby?" },
-    { japanese: "私は日本に行きたいです。", english: "I want to go to Japan." },
-    { japanese: "この犬はかわいいです。", english: "This dog is cute." },
-    { japanese: "彼は本を読んでいます。", english: "He is reading a book." },
-    { japanese: "私はサッカーが得意です。", english: "I am good at soccer." },
-    { japanese: "その店はどこにありますか？", english: "Where is that store?" },
-    { japanese: "私は母と一緒に買い物に行きました。", english: "I went shopping with my mother." },
-    { japanese: "あなたはスポーツが好きですか？", english: "Do you like sports?" },
-    { japanese: "私たちは一緒に映画を見ました。", english: "We watched a movie together." },
-    { japanese: "私は毎日日本語を勉強しています。", english: "I study Japanese every day." },
-    { japanese: "今日はどんな天気ですか？", english: "What is the weather like today?" },
-    { japanese: "私は友達と遊びます。", english: "I play with my friends." },
-    { japanese: "この鉛筆はあなたのですか？", english: "Is this your pencil?" },
-    { japanese: "私の父は毎日会社に行きます。", english: "My father goes to work every day." },
-    { japanese: "その映画は面白かったです。", english: "That movie was interesting." },
-    { japanese: "私は犬を飼っています。", english: "I have a dog." },
-    { japanese: "これは私の好きなテレビ番組です。", english: "This is my favorite TV show." },
-    { japanese: "あなたはどんな音楽が好きですか？", english: "What kind of music do you like?" },
-    { japanese: "私は毎朝学校に行きます。", english: "I go to school every morning." },
-    { japanese: "私は午後3時に帰宅します。", english: "I return home at 3 PM." },
-    { japanese: "彼女は毎日ジョギングをします。", english: "She jogs every day." },
-    { japanese: "この公園はとても静かです。", english: "This park is very quiet." },
-    { japanese: "私は花が好きです。", english: "I like flowers." },
-    { japanese: "今日は何日ですか？", english: "What is today's date?" },
-    { japanese: "あなたは映画が好きですか？", english: "Do you like movies?" },
-    { japanese: "私の母は先生です。", english: "My mother is a teacher." },
-    { japanese: "私は昼ごはんにお弁当を食べます。", english: "I eat a lunch box for lunch." },
-    { japanese: "その猫はとてもかわいいです。", english: "That cat is very cute." },
-    { japanese: "私は毎日絵を描きます。", english: "I draw pictures every day." },
-    { japanese: "彼は図書館で本を読んでいます。", english: "He is reading a book in the library." },
-    { japanese: "私はテニスをするのが好きです。", english: "I like to play tennis." },
-    { japanese: "私は毎週末にお父さんと一緒にサッカーをします。", english: "I play soccer with my father every weekend." },
-    { japanese: "あなたは日本のアニメを見たことがありますか？", english: "Have you ever watched Japanese anime?" },
-    { japanese: "私は週に2回ジョギングをします。", english: "I jog twice a week." },
-    { japanese: "これは私の好きな映画です。", english: "This is my favorite movie." },
-    { japanese: "あなたの好きな色は何ですか？", english: "What is your favorite color?" },
-    { japanese: "今日はとても寒いです。", english: "It is very cold today." },
-    { japanese: "私は毎晩本を読みます。", english: "I read books every night." },
-    { japanese: "私はテレビをあまり見ません。", english: "I don't watch TV much." },
-    { japanese: "私は昼ごはんにラーメンを食べました。", english: "I ate ramen for lunch." },
-    { japanese: "今日は金曜日です。", english: "Today is Friday." },
-    { japanese: "私は動物が好きです。", english: "I like animals." },
-    { japanese: "私の家族は4人です。", english: "My family has four people." },
-    { japanese: "私は自転車で学校に行きます。", english: "I go to school by bike." },
-    { japanese: "私は絵を描くのが得意です。", english: "I am good at drawing." },
-    { japanese: "私は毎日寝る前に本を読みます。", english: "I read a book before bed every day." },
-    { japanese: "あなたは何を食べたいですか？", english: "What do you want to eat?" },
-    { japanese: "私は日曜日に公園に行きます。", english: "I go to the park on Sunday." },
-    { japanese: "私はピザが大好きです。", english: "I love pizza." },
-    { japanese: "私はコーヒーを飲みます。", english: "I drink coffee." },
-    { japanese: "彼は車で学校に行きます。", english: "He goes to school by car." },
-    { japanese: "私は毎朝ジョギングをします。", english: "I jog every morning." },
-    { japanese: "これは私の友達です。", english: "This is my friend." },
-    { japanese: "私は週末に友達と会います。", english: "I meet my friends on weekends." },
-    { japanese: "私の好きな動物は猫です。", english: "My favorite animal is a cat." },
-    { japanese: "私は日本に住んでいます。", english: "I live in Japan." },
-    { japanese: "私は毎晩お風呂に入ります。", english: "I take a bath every night." },
-    { japanese: "私は毎日英語を勉強します。", english: "I study English every day." }
+    { japanese: "あなたの学校はどこですか？", correctAnswer: "Where is your school?" },
+    { japanese: "私はリンゴが好きです。", correctAnswer: "I like apples." },
+    { japanese: "彼は私の兄です。", correctAnswer: "He is my brother." },
+    { japanese: "今日は外が雨です。", correctAnswer: "It is rainy outside." },
+    { japanese: "私は5歳です。", correctAnswer: "I am five years old." },
+    { japanese: "これは私の好きな本です。", correctAnswer: "This is my favorite book." },
+    { japanese: "あなたは英語を話せますか？", correctAnswer: "Can you speak English?" },
+    { japanese: "私たちは公園に行きます。", correctAnswer: "We are going to the park." },
+    { japanese: "私は学校にバスで行きます。", correctAnswer: "I go to school by bus." },
+    { japanese: "お誕生日は何月ですか？", correctAnswer: "When is your birthday?" },
+    { japanese: "私の名前は田中です。", correctAnswer: "My name is Tanaka." },
+    { japanese: "私はピアノを弾きます。", correctAnswer: "I play the piano." },
+    { japanese: "今日は月曜日です。", correctAnswer: "Today is Monday." },
+    { japanese: "あなたは何歳ですか？", correctAnswer: "How old are you?" },
+    { japanese: "私は犬が好きです。", correctAnswer: "I like dogs." },
+    { japanese: "私は日本に住んでいます。", correctAnswer: "I live in Japan." },
+    { japanese: "私はお昼にサンドイッチを食べます。", correctAnswer: "I eat a sandwich for lunch." },
+    { japanese: "彼女は私の友達です。", correctAnswer: "She is my friend." },
+    { japanese: "これは大きいです。", correctAnswer: "This is big." },
+    { japanese: "私は毎日学校に行きます。", correctAnswer: "I go to school every day." },
+    { japanese: "あなたの趣味は何ですか？", correctAnswer: "What is your hobby?" },
+    // 以下、問題を追加
 ];
 
-// クイズの問題と答えのボタンを表示
-function nextQuestion() {
+// ランダムな問題を選んで音声を再生する
+function getRandomQuestion() {
     const question = questions[Math.floor(Math.random() * questions.length)];
-    document.getElementById('question').textContent = question.japanese;
-
-    const wordButtons = document.getElementById('wordButtons');
-    wordButtons.innerHTML = '';
-
-    const button = document.createElement('button');
-    button.textContent = question.english;
-    button.onclick = function() {
-        responsiveVoice.speak(question.english, "Japanese Female");
-        document.getElementById('result').textContent = 'Correct!';
-        const score = parseInt(document.getElementById('score').textContent);
-        document.getElementById('score').textContent = score + 1;
-    }
-    wordButtons.appendChild(button);
+    return question;
 }
 
-document.getElementById('playAudio').onclick = nextQuestion;
+// 音声を再生する関数
+function playAudio(text) {
+    responsiveVoice.speak(text, "Japanese Female");
+}
+
+// 音声の問題を出題して選択肢を表示
+function showQuestion() {
+    const currentQuestion = getRandomQuestion();
+    const japaneseText = currentQuestion.japanese;
+    const correctAnswer = currentQuestion.correctAnswer;
+
+    // 音声で問題を読み上げる
+    playAudio(japaneseText);
+
+    // 正しい答えと間違った答え2つをランダムに選ぶ
+    const allAnswers = [correctAnswer, getRandomFakeAnswer(), getRandomFakeAnswer()];
+    const shuffledAnswers = shuffleArray(allAnswers);
+
+    // 質問と選択肢を表示
+    document.getElementById('question').textContent = japaneseText;
+    const answerButtons = document.getElementById('answer-buttons');
+    answerButtons.innerHTML = ''; // 以前のボタンを消す
+    shuffledAnswers.forEach(answer => {
+        const button = document.createElement('button');
+        button.textContent = answer;
+        button.onclick = function() {
+            checkAnswer(answer, correctAnswer);
+        };
+        answerButtons.appendChild(button);
+    });
+}
+
+// 偽の答えをランダムに選ぶ関数
+function getRandomFakeAnswer() {
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    return randomQuestion.correctAnswer;
+}
+
+// 配列をシャッフルする関数
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// 正解かどうかをチェックする関数
+function checkAnswer(selectedAnswer, correctAnswer) {
+    const resultDiv = document.getElementById('result');
+    const scoreElement = document.getElementById('score');
+    let score = parseInt(scoreElement.textContent);
+
+    if (selectedAnswer === correctAnswer) {
+        resultDiv.textContent = '正解です！';
+        score++;
+    } else {
+        resultDiv.textContent = '不正解です。';
+    }
+
+    scoreElement.textContent = score;
+}
+
+// ボタンを押すと次の問題を表示
+document.getElementById('playAudio').onclick = showQuestion;
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英検5級クイズ</title>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
+</head>
+<body>
+    <h1>英検5級クイズ</h1>
+
+    <div id="question-container">
+        <p id="question">問題を選んでください</p>
+        <div id="answer-buttons">
+            <!-- 答えのボタンがここに表示されます -->
+        </div>
+    </div>
+
+    <button id="playAudio">問題を出す</button>
+    <div id="result"></div>
+    <p>点数: <span id="score">0</span></p>
+
+<script>
+// 100問の英検5級の問題リスト（日本語の問題と正解の英語の答え）
+const questions = [
+    { japanese: "あなたの学校はどこですか？", correctAnswer: "Where is your school?" },
+    { japanese: "私はリンゴが好きです。", correctAnswer: "I like apples." },
+    { japanese: "彼は私の兄です。", correctAnswer: "He is my brother." },
+    { japanese: "今日は外が雨です。", correctAnswer: "It is rainy outside." },
+    { japanese: "私は5歳です。", correctAnswer: "I am five years old." },
+    { japanese: "これは私の好きな本です。", correctAnswer: "This is my favorite book." },
+    { japanese: "あなたは英語を話せますか？", correctAnswer: "Can you speak English?" },
+    { japanese: "私たちは公園に行きます。", correctAnswer: "We are going to the park." },
+    { japanese: "私は学校にバスで行きます。", correctAnswer: "I go to school by bus." },
+    { japanese: "お誕生日は何月ですか？", correctAnswer: "When is your birthday?" },
+    { japanese: "私の名前は田中です。", correctAnswer: "My name is Tanaka." },
+    { japanese: "私はピアノを弾きます。", correctAnswer: "I play the piano." },
+    { japanese: "今日は月曜日です。", correctAnswer: "Today is Monday." },
+    { japanese: "あなたは何歳ですか？", correctAnswer: "How old are you?" },
+    { japanese: "私は犬が好きです。", correctAnswer: "I like dogs." },
+    { japanese: "私は日本に住んでいます。", correctAnswer: "I live in Japan." },
+    { japanese: "私はお昼にサンドイッチを食べます。", correctAnswer: "I eat a sandwich for lunch." },
+    { japanese: "彼女は私の友達です。", correctAnswer: "She is my friend." },
+    { japanese: "これは大きいです。", correctAnswer: "This is big." },
+    { japanese: "私は毎日学校に行きます。", correctAnswer: "I go to school every day." },
+    { japanese: "あなたの趣味は何ですか？", correctAnswer: "What is your hobby?" },
+    { japanese: "私は日本語を勉強しています。", correctAnswer: "I am studying Japanese." },
+    { japanese: "私は昼食にラーメンを食べます。", correctAnswer: "I eat ramen for lunch." },
+    { japanese: "私はテニスが好きです。", correctAnswer: "I like tennis." },
+    { japanese: "今日は何曜日ですか？", correctAnswer: "What day is it today?" },
+    { japanese: "彼は猫を飼っています。", correctAnswer: "He has a cat." },
+    { japanese: "私は週末に映画を見ます。", correctAnswer: "I watch movies on the weekend." },
+    { japanese: "私は毎朝7時に起きます。", correctAnswer: "I wake up at 7 AM every morning." },
+    { japanese: "あなたの好きな色は何ですか？", correctAnswer: "What is your favorite color?" },
+    { japanese: "私は毎日運動をします。", correctAnswer: "I exercise every day." },
+    { japanese: "あなたは何を食べたいですか？", correctAnswer: "What do you want to eat?" },
+    { japanese: "私は車で学校に行きます。", correctAnswer: "I go to school by car." },
+    { japanese: "私は音楽を聴くのが好きです。", correctAnswer: "I like listening to music." },
+    { japanese: "今日は日曜日です。", correctAnswer: "Today is Sunday." },
+    { japanese: "彼は毎日自転車に乗ります。", correctAnswer: "He rides his bike every day." },
+    { japanese: "私はお母さんと買い物に行きます。", correctAnswer: "I go shopping with my mother." },
+    { japanese: "私は毎週水曜日に英語の授業を受けます。", correctAnswer: "I take English classes every Wednesday." },
+    { japanese: "私は毎日朝ごはんを食べます。", correctAnswer: "I eat breakfast every day." },
+    { japanese: "あなたはどこに住んでいますか？", correctAnswer: "Where do you live?" },
+    { japanese: "私はバナナが好きです。", correctAnswer: "I like bananas." },
+    { japanese: "私は猫を2匹飼っています。", correctAnswer: "I have two cats." },
+    { japanese: "私は家で宿題をします。", correctAnswer: "I do my homework at home." },
+    { japanese: "私は毎日学校に行きます。", correctAnswer: "I go to school every day." },
+    { japanese: "今日は晴れです。", correctAnswer: "It is sunny today." },
+    { japanese: "私は朝ごはんにトーストを食べます。", correctAnswer: "I eat toast for breakfast." },
+    { japanese: "私は毎晩8時に寝ます。", correctAnswer: "I go to bed at 8 PM every night." },
+    { japanese: "あなたは映画が好きですか？", correctAnswer: "Do you like movies?" },
+    { japanese: "私は毎週金曜日にサッカーをします。", correctAnswer: "I play soccer every Friday." },
+    { japanese: "私は毎日自転車に乗ります。", correctAnswer: "I ride my bike every day." },
+    { japanese: "私は毎日家でテレビを見ます。", correctAnswer: "I watch TV at home every day." },
+    { japanese: "あなたはどんな音楽が好きですか？", correctAnswer: "What kind of music do you like?" },
+    { japanese: "私は毎日新聞を読みます。", correctAnswer: "I read the newspaper every day." },
+    { japanese: "今日は寒いです。", correctAnswer: "It is cold today." },
+    { japanese: "私は毎日英語を勉強します。", correctAnswer: "I study English every day." },
+    { japanese: "私は毎週日曜日に教会に行きます。", correctAnswer: "I go to church every Sunday." },
+    { japanese: "私は毎日プールで泳ぎます。", correctAnswer: "I swim in the pool every day." },
+    { japanese: "あなたは毎日日本語を勉強していますか？", correctAnswer: "Do you study Japanese every day?" },
+    { japanese: "私は毎週木曜日にピアノのレッスンを受けます。", correctAnswer: "I take piano lessons every Thursday." },
+    { japanese: "今日は雨が降っています。", correctAnswer: "It is raining today." },
+    { japanese: "あなたの好きな映画は何ですか？", correctAnswer: "What is your favorite movie?" },
+    { japanese: "私は毎日自転車に乗ります。", correctAnswer: "I ride my bike every day." },
+    { japanese: "私は毎日音楽を聴きます。", correctAnswer: "I listen to music every day." },
+    { japanese: "私は毎日8時間寝ます。", correctAnswer: "I sleep 8 hours every day." },
+    { japanese: "私は毎週日曜日に運動します。", correctAnswer: "I exercise every Sunday." },
+    { japanese: "私は毎日ギターを練習します。", correctAnswer: "I practice guitar every day." },
+    { japanese: "私は毎月一回、友達と映画を見ます。", correctAnswer: "I watch a movie with my friends once a month." },
+    { japanese: "私は毎年、夏に海に行きます。", correctAnswer: "I go to the beach every summer." },
+    { japanese: "あなたは猫を飼っていますか？", correctAnswer: "Do you have a cat?" },
+    { japanese: "私は毎月1回、美術館に行きます。", correctAnswer: "I go to the art museum once a month." },
+    { japanese: "今日はお母さんの誕生日です。", correctAnswer: "Today is my mother's birthday." },
+    { japanese: "私は毎週日曜日にピアノを練習します。", correctAnswer: "I practice the piano every Sunday." },
+    { japanese: "あなたの好きな食べ物は何ですか？", correctAnswer: "What is your favorite food?" },
+    { japanese: "私は毎月、友達と遊びます。", correctAnswer: "I play with my friends every month." },
+    { japanese: "私は毎日、朝ごはんを食べます。", correctAnswer: "I eat breakfast every day." },
+    { japanese: "私は毎週水曜日にスポーツをします。", correctAnswer: "I play sports every Wednesday." },
+    { japanese: "あなたは映画を見ますか？", correctAnswer: "Do you watch movies?" },
+    { japanese: "私は毎週火曜日にバレーボールをします。", correctAnswer: "I play volleyball every Tuesday." },
+    { japanese: "今日は晴れです。", correctAnswer: "It is sunny today." },
+    { japanese: "私は毎月、図書館に行きます。", correctAnswer: "I go to the library every month." },
+    { japanese: "私は毎年、雪を見ます。", correctAnswer: "I see snow every year." },
+    { japanese: "今日は暑いです。", correctAnswer: "It is hot today." },
+    { japanese: "私は毎日自転車に乗ります。", correctAnswer: "I ride my bike every day." },
+    { japanese: "私は毎日お弁当を食べます。", correctAnswer: "I eat lunch every day." },
+    { japanese: "私は毎月お母さんと買い物に行きます。", correctAnswer: "I go shopping with my mom every month." },
+    { japanese: "私は毎月、映画を見ます。", correctAnswer: "I watch a movie every month." },
+    { japanese: "あなたの好きなスポーツは何ですか？", correctAnswer: "What is your favorite sport?" },
+    { japanese: "私は毎年、春に旅行に行きます。", correctAnswer: "I go on a trip every spring." },
+    { japanese: "私は毎日、野球をします。", correctAnswer: "I play baseball every day." },
+    { japanese: "私は毎月、学校に行きます。", correctAnswer: "I go to school every month." },
+    { japanese: "私は毎月、友達と出かけます。", correctAnswer: "I go out with my friends every month." },
+    { japanese: "あなたは犬を飼っていますか？", correctAnswer: "Do you have a dog?" },
+    { japanese: "私は毎週火曜日に英会話を学びます。", correctAnswer: "I learn English every Tuesday." },
+    { japanese: "私は毎月1回、美術館に行きます。", correctAnswer: "I go to the art museum once a month." },
+    { japanese: "今日は寒いですね。", correctAnswer: "It is cold today." },
+    { japanese: "私は毎日夕方に散歩します。", correctAnswer: "I go for a walk every evening." },
+    { japanese: "私は毎日サッカーを練習します。", correctAnswer: "I practice soccer every day." },
+    { japanese: "私は毎年春に花見をします。", correctAnswer: "I do hanami every spring." },
+    { japanese: "私は毎日新聞を読みます。", correctAnswer: "I read the newspaper every day." }
+];
+
+// ランダムな問題を選んで音声を再生する
+function getRandomQuestion() {
+    const question = questions[Math.floor(Math.random() * questions.length)];
+    return question;
+}
+
+// 音声を再生する関数
+function playAudio(text) {
+    responsiveVoice.speak(text, "Japanese Female");
+}
+
+// 音声の問題を出題して選択肢を表示
+function showQuestion() {
+    const currentQuestion = getRandomQuestion();
+    const japaneseText = currentQuestion.japanese;
+    const correctAnswer = currentQuestion.correctAnswer;
+
+    // 音声で問題を読み上げる
+    playAudio(japaneseText);
+
+    // 正しい答えと間違った答え2つをランダムに選ぶ
+    const allAnswers = [correctAnswer, getRandomFakeAnswer(), getRandomFakeAnswer()];
+    const shuffledAnswers = shuffleArray(allAnswers);
+
+    // 質問と選択肢を表示
+    document.getElementById('question').textContent = japaneseText;
+    const answerButtons = document.getElementById('answer-buttons');
+    answerButtons.innerHTML = ''; // 以前のボタンを消す
+    shuffledAnswers.forEach(answer => {
+        const button = document.createElement('button');
+        button.textContent = answer;
+        button.onclick = function() {
+            checkAnswer(answer, correctAnswer);
+        };
+        answerButtons.appendChild(button);
+    });
+}
+
+// 偽の答えをランダムに選ぶ関数
+function getRandomFakeAnswer() {
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    return randomQuestion.correctAnswer;
+}
+
+// 配列をシャッフルする関数
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// 正解かどうかをチェックする関数
+function checkAnswer(selectedAnswer, correctAnswer) {
+    const resultDiv = document.getElementById('result');
+    const scoreElement = document.getElementById('score');
+    let score = parseInt(scoreElement.textContent);
+
+    if (selectedAnswer === correctAnswer) {
+        resultDiv.textContent = '正解です！';
+        score++;
+    } else {
+        resultDiv.textContent = '不正解です。';
+    }
+
+    scoreElement.textContent = score;
+}
+
+// ボタンを押すと次の問題を表示
+document.getElementById('playAudio').onclick = showQuestion;
 </script>
 </body>
 </html>
